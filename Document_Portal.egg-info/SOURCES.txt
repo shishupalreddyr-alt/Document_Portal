@@ -1,0 +1,17 @@
+README.md
+setup.py
+Document_Portal.egg-info/PKG-INFO
+Document_Portal.egg-info/SOURCES.txt
+Document_Portal.egg-info/dependency_links.txt
+Document_Portal.egg-info/top_level.txt
+exception/__init__.py
+exception/custom_exception.py
+logger/__init__.py
+logger/custom_logger.py
+src/__init__.py
+src/docanalyzer/__init__.py
+src/doccompare/__init__.py
+src/multidocchat/__init__.py
+src/singledocchat/__init__.py
+utils/__init__.py
+utils/llm_utils.py
