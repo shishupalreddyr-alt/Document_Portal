@@ -22,4 +22,5 @@
   For ex - Lang chain , Lan graph .... packages are available in PyPi 
   Projects - transformed to Package using setup.py    setuptools 
   This pacakge then can be ported to PYPI reposiroty for public usage like lang chain, numpy .... etc 
-   
+   RAG Architecture
+   ![alt text](image.png)
