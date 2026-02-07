@@ -1,0 +1,30 @@
+faiss_db:
+  collection_name: "document_portal"
+  #embedding_dimension: 768
+  #index_file: "faiss_index.bin"
+
+embedding_model:
+  model_provider: "google"
+  model_name: "models/text-embedding-004"
+
+  model_provider: "OpenAI"
+  model_name: ""
+
+llm:
+  groq:
+    model_provider: "groq"
+    model_name:"deepseek-r1-distill-llama-70b"
+    temperature:50
+    max_output_tokens:2048
+
+  google:
+    model_provider: "google"
+    model_name:"gemini-2.0-flash"
+    temperature:50
+    max_output_tokens:2048
+
+  OpenAI:
+    model_provider: "OpenAI"
+    model_name: "Gpt-4o-mini"
+    temperature: 50
+    max_output_tokens: 2048
