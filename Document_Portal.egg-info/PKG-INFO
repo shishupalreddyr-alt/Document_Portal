@@ -1,5 +1,60 @@
 Metadata-Version: 2.4
-Name: Document_Portal
+Name: document_portal
 Version: 0.1
+Summary: An intelligent document analysis and comparison system powered by LLMs
 Author: Shishupalreddy
+Classifier: Programming Language :: Python :: 3.10
+Classifier: License :: OSI Approved :: MIT License
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: langchain
+Requires-Dist: python-dotenv
+Requires-Dist: langchain-groq
+Requires-Dist: langchain-openai
+Requires-Dist: langchain-google-genai
+Requires-Dist: langchain-community
+Requires-Dist: pypdf
+Requires-Dist: faiss-cpu
+Requires-Dist: structlog
+Requires-Dist: PyMuPDF
+Requires-Dist: pydantic
+Requires-Dist: structlog
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: pylint; extra == "dev"
+Requires-Dist: ipykernel; extra == "dev"
 Dynamic: author
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+### Minimum requriement for RAG based Document portal project 
+1. LLM Model  ## Groq(Free), OpenAI(paid), Gemini(15 days free), Claude , Huggingface (Free)
+   For On-prem - try out  OLLAMA  - should have high performance system
+
+2. Embedding models
+   # Openai
+   # Huggingface 
+   # huggigface 
+   # Gemini 
+
+3. Vector Database 
+   # In-memory 
+   # on- disk
+   # Cloud based --- AWS Bedrock, AstraDB etc 
+
+## AWS secret manager for managing all the KEYS 
+
+### Installing setup.py file 
+# pip install -e .    " please ensure to have same syntax 
+  The above makes the Document_Portal pacakge as part of the current virtual environment 
+   
+  For ex - Lang chain , Lan graph .... packages are available in PyPi 
+  Projects - transformed to Package using setup.py    setuptools 
+  This pacakge then can be ported to PYPI reposiroty for public usage like lang chain, numpy .... etc 
+   RAG Architecture
+   ![alt text](image.png)

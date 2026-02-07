@@ -26,5 +26,5 @@ llm:
   OpenAI:
     model_provider: "OpenAI"
     model_name: "Gpt-4o-mini"
-    temperature: 50
-    max_output_tokens: 2048
+    temperature:50
+    max_output_tokens:2048

@@ -5,15 +5,13 @@ langchain-openai
 langchain-google-genai
 langchain-community
 pypdf
-##Faiss vector DB - Run time
 faiss-cpu
-## Logging 
 structlog
 PyMuPDF
 pydantic
+structlog
 
-
-
-
-
--e .   
+[dev]
+pytest
+pylint
+ipykernel

@@ -2,7 +2,7 @@ import os
 import sys
 import json
 from dotenv import load_dotenv
-from untils.config_loader import load_config
+from utils.config_loader import load_config
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
@@ -51,8 +51,8 @@ class ApiKeyManager:
     
     class ModelLoader:
         """
-    Loads embedding models and LLMs based on config and environment.
-    """
+        Loads embedding models and LLMs based on config and environment.
+        """
 
     def __init__(self):
         if os.getenv("ENV", "local").lower() != "production":
@@ -112,13 +112,13 @@ class ApiKeyManager:
                 temperature=temperature,
             )
 
-        # elif provider == "openai":
-        #     return ChatOpenAI(
-        #         model=model_name,
-        #         api_key=self.api_key_mgr.get("OPENAI_API_KEY"),
-        #         temperature=temperature,
-        #         max_tokens=max_tokens
-        #     )
+        elif provider == "openai":
+             return ChatOpenAI(
+                 model=model_name,
+                 api_key=self.api_key_mgr.get("OPENAI_API_KEY"),
+                 temperature=temperature,
+                 max_tokens=max_tokens
+             )
 
         else:
             log.error("Unsupported LLM provider", provider=provider)
@@ -127,7 +127,7 @@ class ApiKeyManager:
 
 if __name__ == "__main__":
     loader = ModelLoader()
-
+    
     # Test Embedding
     embeddings = loader.load_embeddings()
     print(f"Embedding Model Loaded: {embeddings}")
