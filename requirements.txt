@@ -1,9 +1,10 @@
-langchain
+langchain[all]
 python-dotenv
 langchain-groq
 langchain-openai
 langchain-google-genai
 langchain-community
+langchain-core
 pypdf
 ##Faiss vector DB - Run time
 faiss-cpu
@@ -11,6 +12,8 @@ faiss-cpu
 structlog
 PyMuPDF
 pydantic
+fitz    
+
 
 
 

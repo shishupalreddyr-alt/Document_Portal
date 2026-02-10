@@ -1,15 +1,16 @@
-langchain
+langchain[all]
 python-dotenv
 langchain-groq
 langchain-openai
 langchain-google-genai
 langchain-community
+langchain-core
 pypdf
 faiss-cpu
 structlog
 PyMuPDF
 pydantic
-structlog
+fitz
 
 [dev]
 pytest

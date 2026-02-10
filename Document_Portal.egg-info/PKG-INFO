@@ -7,18 +7,19 @@ Classifier: Programming Language :: Python :: 3.10
 Classifier: License :: OSI Approved :: MIT License
 Requires-Python: >=3.10
 Description-Content-Type: text/markdown
-Requires-Dist: langchain
+Requires-Dist: langchain[all]
 Requires-Dist: python-dotenv
 Requires-Dist: langchain-groq
 Requires-Dist: langchain-openai
 Requires-Dist: langchain-google-genai
 Requires-Dist: langchain-community
+Requires-Dist: langchain-core
 Requires-Dist: pypdf
 Requires-Dist: faiss-cpu
 Requires-Dist: structlog
 Requires-Dist: PyMuPDF
 Requires-Dist: pydantic
-Requires-Dist: structlog
+Requires-Dist: fitz
 Provides-Extra: dev
 Requires-Dist: pytest; extra == "dev"
 Requires-Dist: pylint; extra == "dev"
