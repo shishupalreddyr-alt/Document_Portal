@@ -5,6 +5,7 @@ langchain-openai
 langchain-google-genai
 langchain-community
 langchain-core
+langchain_core
 pypdf
 faiss-cpu
 structlog

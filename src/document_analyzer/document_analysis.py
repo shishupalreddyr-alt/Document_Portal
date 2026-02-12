@@ -1,10 +1,11 @@
 import os
 from utils.model_loader import ModelLoader
-from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.output_parsers import JsonOutputParser  
+#from langchain_core.prompts import ChatPromptTemplate
+from langchain.output_parsers import OutputFixingParser 
+ 
 
-from langchain.output_parsers import OutputFixingParser  
-
-from logger.custom_logger import CustomLogger
+from logger.custom_logger_archive2 import CustomLogger
 from exception.custom_exception import DocumentPortalException
 from model.models import *
 
@@ -20,5 +21,11 @@ class DocumentAnalyzer:
     def analyze_metadata(self):
         pass
 
+    def analyze_document(self):
+        pass
 
+
+
+
+ 
 

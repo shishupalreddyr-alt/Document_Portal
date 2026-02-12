@@ -1,84 +1,53 @@
-# logger/custom_logger.py
 import os
 import logging
-from logging.handlers import RotatingFileHandler
 from datetime import datetime
-import traceback
-import sys
 import structlog
 
-
 class CustomLogger:
-    """
-    Structured JSON logger with rotating file support.
-    Automatically captures exceptions and includes file name and line number
-    from custom exceptions if present.
-    """
-
-    def __init__(self, log_dir="logs", max_bytes=5_000_000, backup_count=5):
-        self.logs_dir = os.path.join(os.getcwd(), log_dir)
+    def __init__(self, log_dir="logs"):
+        
+        self.logs_dir=os.path.join(os.getcwd(), log_dir)
         os.makedirs(self.logs_dir, exist_ok=True)
 
-        self.log_file_path = os.path.join(self.logs_dir, "document_portal.log")
-        self.max_bytes = max_bytes
-        self.backup_count = backup_count
+        log_file=f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+        self.log_file_path=os.path.join(self.logs_dir, log_file)
 
-    def get_logger(self, name):
-        logger_name = os.path.basename(name)
+        #self.logger = structlog.get_logger()
 
-        # ---------- stdlib logger ----------
-        std_logger = logging.getLogger(logger_name)
-        std_logger.setLevel(logging.ERROR)
+    def get_logger(self, name=__file__):
+        logger_name=os.path.basename(name)
+        
+        #Configure logging for console and file 
+        file_handler = logging.FileHandler(self.log_file_path)
+        file_handler.setLevel(logging.INFO)
+        file_handler.setFormatter(logging.Formatter("%(message)s")) #Raw JSON lines
 
-        if not std_logger.handlers:
-            # Rotating file handler
-            file_handler = RotatingFileHandler(
-                self.log_file_path,
-                maxBytes=self.max_bytes,
-                backupCount=self.backup_count,
-                mode="a",
-                encoding="utf-8",
-            )
-            file_handler.setLevel(logging.ERROR)
-            file_handler.setFormatter(logging.Formatter("%(message)s"))
-            std_logger.addHandler(file_handler)
 
-            # Console handler (optional)
-            console_handler = logging.StreamHandler()
-            console_handler.setLevel(logging.ERROR)
-            console_handler.setFormatter(logging.Formatter("%(message)s"))
-            std_logger.addHandler(console_handler)
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)
+        console_handler.setFormatter(logging.Formatter("%(message)s"))  
 
-        std_logger.propagate = False
-
-        # ---------- structlog processors ----------
-        def enrich_exception(event_logger, method_name, event_dict):
-            """
-            Attach exception traceback and, if a custom exception is logged,
-            include its file_name and lineno automatically.
-            """
-            exc_type, exc_value, exc_tb = sys.exc_info()
-            if exc_tb is not None:
-                # Always attach traceback
-                event_dict["exception"] = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
-
-                # If the exception is a DocumentPortalException, include extra fields
-                if hasattr(exc_value, "file_name") and hasattr(exc_value, "lineno"):
-                    event_dict["file_name"] = getattr(exc_value, "file_name", "Unknown")
-                    event_dict["lineno"] = getattr(exc_value, "lineno", -1)
-
-            return event_dict
-
-        structlog.configure(
-            processors=[
-                structlog.processors.TimeStamper(fmt="iso", utc=True, key="timestamp"),
-                structlog.processors.add_log_level,
-                enrich_exception,  # auto-attach exception + file/line info
-                structlog.processors.JSONRenderer(),
-            ],
-            logger_factory=structlog.stdlib.LoggerFactory(),
-            wrapper_class=structlog.stdlib.BoundLogger,
-            cache_logger_on_first_use=True,
+        logging.basicConfig(
+            level=logging.INFO,
+            handlers=[console_handler, file_handler]
         )
 
+        #Configure Structlog for JSON output format
+        structlog.configure(
+            processors=[
+                structlog.processors.TimeStamper(fmt="iso",utc=True, key="timestamp"),
+                structlog.processors.add_log_level,
+                structlog.processors.EventRenamer(to="event"),
+                structlog.processors.JSONRenderer()
+            ],
+            logger_factory=structlog.stdlib.LoggerFactory(),
+            cache_logger_on_first_use=True,
+        )
         return structlog.get_logger(logger_name)
+    
+
+    ###Testing
+if __name__ == "__main__":
+    logger = CustomLogger().get_logger(__file__)
+    logger.info("User uploaded a file", user_id=123, filename="report.pdf")
+    logger.error("Failed to process PDF", error="File not found", user_id=123)

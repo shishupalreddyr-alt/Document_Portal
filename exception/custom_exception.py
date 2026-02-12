@@ -27,10 +27,10 @@ class DocumentPortalException(Exception):
 
     def __str__(self):
         return f"""
-Error in [{self.file_name}] at line [{self.lineno}]
-Message: {self.error_message}
-Traceback:
-{self.traceback_str}
+        Error in [{self.file_name}] at line [{self.lineno}]
+        Message: {self.error_message}
+        Traceback:
+        {self.traceback_str}
 """
 
 
@@ -43,7 +43,7 @@ if __name__ == "__main__":
         app_exc = DocumentPortalException(e)
 
     # ✅ auto logs traceback without exc_info=True
-        logger.error("Document Portal error occurred")
+        logger.info("Document Portal error occurred")
 
     # Preserve original traceback if needed
         print("exception details from except block ", app_exc)  # This will show the custom exception message with traceback
