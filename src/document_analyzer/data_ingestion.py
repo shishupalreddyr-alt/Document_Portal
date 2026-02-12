@@ -2,6 +2,8 @@ import os
 import fitz  # wrapper on top of pypdf loader
 import uuid
 from datetime import datetime
+import shutil
+#import os
 
 from logger.custom_logger_archive2 import CustomLogger
 
@@ -33,27 +35,57 @@ class DocumentHandler:
         
     
     
-    def save_pdf(self,uploaded_file):
-        try:
-            filename=os.path.basename(uploaded_file.name)
+    #def save_pdf(self,uploaded_file):
+    #    try:
+    #        filename=os.path.basename(uploaded_file.name)
 
-            if not filename.lower().endswith('.pdf'):
-                self.log.error(f"Invalid file type: {str(e)}")
-                raise DocumentPortalException("Uploaded file is not a PDF")
-            save_path=os.path.join(self.session_path,filename)
+    #        if not filename.lower().endswith('.pdf'):
+    #            self.log.error(f"Invalid file type: {str(e)}")
+    #            raise DocumentPortalException("Uploaded file is not a PDF")
+    #        save_path=os.path.join(self.session_path,filename)
             
-            with open(save_path,"wb") as f:
-                #with open(uploaded_file,"rb") as src_file:
-                f.write(uploaded_file.getbuffer()) 
+    #        with open(save_path,"wb") as f:
+    #           #with open(uploaded_file,"rb") as src_file:
+    #            f.write(uploaded_file.getbuffer()) 
+    #        self.log.info(f"PDF saved successfully at {save_path}")
+    #        return save_path
+    #    except DocumentPortalException as e:
+    #        self.log.error(f"Error saving PDF: {str(e)}")
+     #       raise DocumentPortalException(f"Error saving PDF:{str(e)}",e) from e
+
+    def save_pdf(self, uploaded_file):
+        try:
+            filename = os.path.basename(uploaded_file)
+            #print("filetype", type(uploaded_file), "filename", filename)
+            if not filename.lower().endswith(".pdf"):
+                raise DocumentPortalException("Uploaded file is not a PDF")
+
+            save_path = os.path.join(self.session_path, filename)
+
+        # Simple and efficient file copy
+            with open(uploaded_file, "rb") as src:
+                with open(save_path, "wb") as dest:
+                    dest.write(src.read())
+            #shutil.copy2(pdf_path, save_path)
+
             self.log.info(f"PDF saved successfully at {save_path}")
             return save_path
-        except DocumentPortalException as e:
-            self.log.error(f"Error saving PDF: {str(e)}")
-            raise DocumentPortalException(f"Error saving PDF:{str(e)}",e) from e
 
-    def read_pdf(self):
+        except Exception as e:
+            self.log.error(f"Error saving PDF: {str(e)}")
+            raise DocumentPortalException(f"Error saving PDF: {str(e)}"
+            ) from e
+
+    def read_pdf(self,pdf_path) -> str:
         try:
-            pass
+            print("fitz version",fitz.__file__)
+            text_chunks=[]
+            with fitz.open(pdf_path) as doc:
+                for page_num,page in enumerate(doc, start=1):
+                    text_chunks.append(f"\n---Page {page_num} ---\n{page.get_text()}")
+            text= "\n".join(text_chunks)
+            self.log.info(f"PDF read successfully from {pdf_path}")
+            return text
         except DocumentPortalException as e:
             self.log.error(f"Error reading PDF: {str(e)}")
             raise DocumentPortalException("Error reading PDF", e) from e    
@@ -83,13 +115,16 @@ if __name__ == "__main__":
             
             return open(self._file_path_,"rb").read()
 
-    dummy_pdf = DummyFile(pdf_path)
+    dummy_pdf = pdf_path #DummyFile(pdf_path)
 
     handler=DocumentHandler(session_id="Testsesion")
 
     try:
         saved_path=handler.save_pdf(dummy_pdf)
         print(f"PDF saved at: {saved_path}")
+
+        content=handler.read_pdf(saved_path)
+        print(f"PDF content:\n{content[:500]}...") # Print first 500 characters for brevity 
 
     except DocumentPortalException as e:
         print("Custom Exception Caught:")
