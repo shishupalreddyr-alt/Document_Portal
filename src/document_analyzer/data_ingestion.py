@@ -33,26 +33,6 @@ class DocumentHandler:
             self.log.error(f"Error initializing DocumentHandler: {str(e)}")
             raise DocumentPortalException("Error initializing DocumentHandler",e) from e
         
-    
-    
-    #def save_pdf(self,uploaded_file):
-    #    try:
-    #        filename=os.path.basename(uploaded_file.name)
-
-    #        if not filename.lower().endswith('.pdf'):
-    #            self.log.error(f"Invalid file type: {str(e)}")
-    #            raise DocumentPortalException("Uploaded file is not a PDF")
-    #        save_path=os.path.join(self.session_path,filename)
-            
-    #        with open(save_path,"wb") as f:
-    #           #with open(uploaded_file,"rb") as src_file:
-    #            f.write(uploaded_file.getbuffer()) 
-    #        self.log.info(f"PDF saved successfully at {save_path}")
-    #        return save_path
-    #    except DocumentPortalException as e:
-    #        self.log.error(f"Error saving PDF: {str(e)}")
-     #       raise DocumentPortalException(f"Error saving PDF:{str(e)}",e) from e
-
     def save_pdf(self, uploaded_file):
         try:
             filename = os.path.basename(uploaded_file)
