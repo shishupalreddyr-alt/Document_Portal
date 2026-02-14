@@ -13,11 +13,11 @@ llm:
   google:
     model_provider: "google"
     model_name: "gemini-2.0-flash"
-    temperature: 50
+    temperature: 1
     max_output_tokens: 2048
 
   OpenAI:
     model_provider: "OpenAI"
-    model_name: "Gpt-4o-mini"
-    temperature: 50
+    model_name: "gpt-4o"
+    temperature: 1
     max_output_tokens: 2048

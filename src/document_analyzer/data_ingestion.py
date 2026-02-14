@@ -31,7 +31,7 @@ class DocumentHandler:
             self.log.info(f"Session directory created for DATA Storage: {self.session_id}, {self.session_path}")
         except Exception as e:
             self.log.error(f"Error initializing DocumentHandler: {str(e)}")
-            raise DocumentPortalException("Error initializing DocumentHandler",e) from e
+            raise DocumentPortalException(e)
         
     def save_pdf(self, uploaded_file):
         try:
@@ -53,8 +53,7 @@ class DocumentHandler:
 
         except Exception as e:
             self.log.error(f"Error saving PDF: {str(e)}")
-            raise DocumentPortalException(f"Error saving PDF: {str(e)}"
-            ) from e
+            raise DocumentPortalException(e)
 
     def read_pdf(self,pdf_path) -> str:
         try:
@@ -68,7 +67,7 @@ class DocumentHandler:
             return text
         except DocumentPortalException as e:
             self.log.error(f"Error reading PDF: {str(e)}")
-            raise DocumentPortalException("Error reading PDF", e) from e    
+            raise DocumentPortalException(e)    
 
 
 
@@ -81,9 +80,6 @@ if __name__ == "__main__":
     doc_handler = DocumentHandler()
     pdf_path="C:\\LLMOpSProjects\\Document_Portal\\Data\\Document_analysis\\SAP Joule Nov 2025.pdf"
     doc_handler.save_pdf(pdf_path)
-#    except DocumentPortalException as e:
-#   print("Custom Exception Caught:")
-#  print(e)
 
     class DummyFile:
         def __init__(self, file_path):
