@@ -1,13 +1,14 @@
 import os
 from utils.model_loader import ModelLoader
 from langchain_core.output_parsers import JsonOutputParser
+from langchain.output_parsers import OutputFixingParser
 
 import sys 
 
 from logger.custom_logger import CustomLogger
 from exception.custom_exception import DocumentPortalException
 from model.models import *
-from promptengg.promptlibrary import *
+from promptengg.promptlibrary import PROMPT_REGISTRY
 
 class DocumentAnalyzer:
     """Analyzes the content and metadata of documents using pretrained models.
@@ -20,9 +21,9 @@ class DocumentAnalyzer:
 
             #Prepare parsers
             self.parser=JsonOutputParser(pydantic_object=Metadata)
-#            self.fixing_parser=OutputFixingParser.from_llm(llm=self.llm, parser=self.parser)
+            self.fixing_parser=OutputFixingParser.from_llm(llm=self.llm, parser=self.parser)
 
-            self.prompt=prompt
+            self.prompt=PROMPT_REGISTRY["document_analysis"]
             self.log.info("Document analyzer initialized.")
 
         except DocumentPortalException as e:
@@ -45,7 +46,7 @@ class DocumentAnalyzer:
 #        print("llm provider selected:", self.llm)
         try:
             # Use the prompt template for document analysis
-            chain=self.prompt | self.llm   #|self.fixing_parser
+            chain=self.prompt | self.llm |self.fixing_parser
             self.log.info("Document analysis completed.")
             
             response = chain.invoke({

@@ -1,11 +1,11 @@
-langchain[all]
+langchain==0.3.27
 python-dotenv
 langchain-groq
 langchain-openai
 langchain-google-genai
-langchain-community
-langchain-core
-langchain_core
+langchain-community==0.3.27
+langchain-core==0.3.72
+langchain_core==0.3.72
 pypdf
 ##Faiss vector DB - Run time
 faiss-cpu
