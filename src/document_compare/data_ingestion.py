@@ -8,7 +8,7 @@ from exception.custom_exception import DocumentPortalException
 class Document_ingestion:
     """Handles the ingestion of documents into the system.
     """
-    def __init__(self,base_dir):
+    def __init__(self,base_dir: str ="Data\\Document_compare"):
         """
 
         Args:
@@ -78,4 +78,25 @@ class Document_ingestion:
             return "\n".join(all_text)                         
         except Exception as e:
             self.log.error(f"Error occurred while reading PDF files: {e}")
+            raise DocumentPortalException(e)
+    
+    def combine_documents(self) -> str:
+        try:
+            content_dict={}
+            doc_parts=[]
+
+            for filename in sorted(self.base_dir.iterdir()):
+                if filename.is_file() and filename.suffix.lower() == ".pdf":
+                    content_dict[filename.name] = self.read_pdf(filename)
+                    #text=self.read_pdf(filename)
+                    #content_dict[filename.name]=text
+
+            for filename, content in content_dict.items():
+                doc_parts.append(f"Document: {filename.name}\n{content}")
+
+            combined_content = "\n".join(doc_parts)
+            self.log.info("Successfully combined documents.", count=len(doc_parts))
+            return combined_content
+        except Exception as e:
+            self.log.error(f"Error occurred while combining documents: {e}")
             raise DocumentPortalException(e)

@@ -12,7 +12,7 @@ from utils.model_loader import ModelLoader
 
 
 class DocumentComparatorLLM:
-    def __init__(self):
+    def __init__(self,base_dir:str="Data\\Doument_compare"):
         load_env=load_dotenv()
         self.log=CustomLogger().get_logger(__name__)
         self.loader=ModelLoader()
