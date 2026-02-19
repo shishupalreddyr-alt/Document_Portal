@@ -24,8 +24,12 @@ class Document_ingestion:
         """Delete existing files in the specified directory.
         """
         try:
-            if self.base_dir.exists()
-            pass
+            if self.base_dir.exists() and self.base_dir.is_dir():
+                for file in self.base_dir.iterdir():
+                    if file.is_file():
+                        file.unlink()
+                        self.log.info(f"Deleted file: {file.name}")
+                self.log.info("All existing files deleted.")
         except Exception as e:
             self.log.error(f"Error occurred while deleting existing files: {e}")
             raise DocumentPortalException(e)
