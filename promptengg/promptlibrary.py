@@ -21,10 +21,14 @@ You are expected to perform the below tasks
 5. Provide a summary of the comparison
 Return ONLY valid JSON matching the exact schema below.
 
-{format_instructions}
+
 
 Compare these documents:
 {document_texts}
+
+return the output in this format:
+{format_instructions}
+                                                                                                                                                                                    
 """)
 
 PROMPT_REGISTRY={"document_analysis": document_analysis_prompt,

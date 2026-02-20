@@ -10,14 +10,14 @@ class DocumentIngestion:
     Handles document saving, validation, and PDF text extraction.
     """
 
-    def __init__(self,base_dir: str ="Data\\Document_compare"):
+    def __init__(self,base_dir: str = "Data\\Document_compare"):
         """
         Args:
             base_dir (_type_): _description_
         """
         self.log=CustomLogger().get_logger(__name__)
         self.base_dir = Path(base_dir)     
-        self.base_dir.mkdir(parents=True, exist_ok=True)
+        #self.base_dir.mkdir(parents=True, exist_ok=True)
         self.log.info("Document ingestion module initialized.")
 
     # ----------------------------------------------------
@@ -28,7 +28,8 @@ class DocumentIngestion:
         """Delete existing files in the base directory."""
         for file in self.base_dir.glob("*"):
             if file.is_file():
-                file.unlink()
+                #file.unlink()
+                pass
 
         if self.log:
             self.log.info("Existing files deleted successfully.")
@@ -46,8 +47,8 @@ class DocumentIngestion:
             ref_path = self.base_dir / referenced_file.name
             actual_path = self.base_dir / actual_file.name
 
-            self._write_file(ref_path, referenced_file._getbuffer())
-            self._write_file(actual_path, actual_file._getbuffer())
+            self._write_file(ref_path, referenced_file.getbuffer())
+            self._write_file(actual_path, actual_file.getbuffer())
 
             if self.log:
                 self.log.info(f"Files saved: {ref_path}, {actual_path}")
@@ -85,9 +86,7 @@ class DocumentIngestion:
 
             with fitz.open(str(pdf_path)) as doc:
                 if doc.is_encrypted:
-                    raise DocumentPortalException(
-                        f"PDF is encrypted: {pdf_path.name}"
-                    )
+                    raise ValueError(f"PDF is encrypted: {pdf_path.name}")      
 
                 page_count = doc.page_count
 
