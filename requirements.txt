@@ -11,8 +11,9 @@ pypdf
 faiss-cpu
 ## Logging 
 structlog
-PyMuPDF
+PyMuPDF==1.26.3
 pydantic
-fitz    
-pandas as pd
+pypdf==5.8.0
+
+pandas
 -e .   

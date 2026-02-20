@@ -24,6 +24,9 @@ src/document_analyzer/__init__.py
 src/document_analyzer/data_ingestion.py
 src/document_analyzer/document_analysis.py
 src/document_compare/__init__.py
+src/document_compare/data_ingestion.py
+src/document_compare/data_ingestion_01.py
+src/document_compare/document_comparator.py
 src/multidocument_chat/__init__.py
 src/singledocument_chat/__init__.py
 utils/__init__.py

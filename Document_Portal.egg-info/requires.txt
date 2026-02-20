@@ -9,9 +9,10 @@ langchain_core==0.3.72
 pypdf
 faiss-cpu
 structlog
-PyMuPDF
+PyMuPDF==1.26.3
 pydantic
-fitz
+pypdf==5.8.0
+pandas
 
 [dev]
 pytest
