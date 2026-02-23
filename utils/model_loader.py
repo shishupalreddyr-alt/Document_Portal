@@ -7,7 +7,7 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
-from langchain_openai import OpenAIEmbeddings as openai_embeddings      
+from langchain_openai import OpenAIEmbeddings #as openai_embeddings      
 from logger.custom_logger_archive import CustomLogger
 from exception.custom_exception_archive import DocumentPortalException
 log = CustomLogger().get_logger(__name__)
@@ -18,8 +18,8 @@ class ModelLoader:
     A utility class to load embedding models and LLM models.
     """
     def __init__(self):
-        
-        load_dotenv()
+        #load_dotenv()
+        load_dotenv(dotenv_path=".env", override=True)
         self._validate_env()
         self.config=load_config()
         log.info("Configuration loaded successfully", config_keys=list(self.config.keys()))
@@ -35,26 +35,44 @@ class ModelLoader:
         missing = [k for k, v in self.api_keys.items() if not v]
         if missing:
             log.error("Missing environment variables", missing_vars=missing)
-            raise DocumentPortalException("Missing environment variables", sys)
+
         log.info("Environment variables validated", available_keys=[k for k in self.api_keys if self.api_keys[k]])
         
     def load_embeddings(self):
-        """
-        Load and return the embedding model.
-        """
         try:
             log.info("Loading embedding model...")
-            model_name = self.config["model_name"]["embedding_model"]
-       #     print("Models:", model_name)
-            if model_name == "google":
+            provider = os.getenv("EMBEDDING_PROVIDER")
+
+            if not provider:
+                raise ValueError("EMBEDDING_PROVIDER not set in environment")
+            provider=provider.lower()
+
+            embedding_block = self.config["embedding_model"]
+
+            if provider not in embedding_block:
+                raise ValueError(f"Unsupported embedding provider: {provider}")
+            
+            model_name = embedding_block[provider]["model_name"]
+
+            print("Model:", model_name)
+            print("Provider:", provider)
+
+            if provider == "google":
                 return GoogleGenerativeAIEmbeddings(model=model_name)
-            elif model_name == "OpenAI":
-                return openai_embeddings(model=model_name) #, api_key=self.api_keys["OPENAI_API_KEY"])
-            return GoogleGenerativeAIEmbeddings(model=model_name)
+
+            elif provider == "openai":
+                return OpenAIEmbeddings(
+                model=model_name,
+                api_key=self.api_keys["OPENAI_API_KEY"]
+            )
+
+            else:
+                raise ValueError(f"Unsupported embedding provider: {provider}")
+
         except Exception as e:
-            log.error("Error loading embedding model", error=str(e))
-            raise DocumentPortalException("Failed to load embedding model", sys)
-        
+            log.error(f"Error loading embeddings: {e}")
+            raise DocumentPortalException(e)
+
     def load_llm(self):
         """
         Load and return the LLM model.
@@ -66,19 +84,26 @@ class ModelLoader:
         log.info("Loading LLM...")
 
         provider_key = os.getenv("LLM_PROVIDER")  # "groq")  # Default groq
+        provider_key = os.getenv("LLM_PROVIDER")
+        
+        print("ENV LLM_PROVIDER:", provider_key)
+        print("YAML llm keys:", self.config["llm"].keys())
+        
         if provider_key not in llm_block:
             log.error("LLM provider not found in config", provider_key=provider_key)
             raise ValueError(f"Provider '{provider_key}' not found in config")
         #print("Provider Config:", llm_block)
        
         llm_config = llm_block[provider_key]
-        provider = 'OpenAI' #llm_config.get("provider")
+        provider = provider_key    #llm_config.get("provider")
         model_name = llm_config.get("model_name")
         temperature = llm_config.get("temperature", 0.2)
         max_tokens = llm_config.get("max_output_tokens", 2048)
-    
-        log.info("Loading LLM", provider=provider, model=model_name, temperature=temperature, max_tokens=max_tokens)
 
+        print("model name", model_name, "provider", provider)
+    
+        log.info("Loading LLM",  model=model_name, temperature=temperature, max_tokens=max_tokens)
+  #      provider="openai" 
         if provider == "google":
             llm=ChatGoogleGenerativeAI(
                 model=model_name,
@@ -95,12 +120,12 @@ class ModelLoader:
             )
             return llm
 
-        elif provider == "OpenAI":
+        elif provider == "openai":
             return ChatOpenAI(
                 model=model_name,
                 api_key=self.api_keys["OPENAI_API_KEY"],
-                temperature=temperature,
-                max_tokens=max_tokens
+                temperature=temperature
+                #max_output_tokens=max_tokens
         )
         else:
             log.error("Unsupported LLM provider", provider=provider)

@@ -14,7 +14,7 @@ def test_conv_rag(pdf_path:str,question:str):
             print("FAISS index already exists. Loading existing index.")
             embeddings=model_loader.load_embeddings()
             vector_store=FAISS.load_local(folder_path=str(FAISS_INDEX_PATH), embeddings=embeddings,allow_dangerous_deserialization=True)
-            retriever=vector_store.as_retriever(search_type="similarity,search_kwargs={"k}:5)
+            retriever=vector_store.as_retriever(search_type="similarity",search_kwargs={"k": 5} )
         else:
             print("FAISS index not found. Ingesting PDF and creating INDEX")
             with open(pdf_path, "rb") as f:
@@ -34,10 +34,6 @@ def test_conv_rag(pdf_path:str,question:str):
 if __name__ == "__main__":
     pdf_path = "C:\\LLMOpSProjects\\Document_Portal\\Data\\Single_document_chat\\MasteringRAG.pdf"
     question = "What are the key chunking methods in RAG"
-    
-    #r"C:\\LLMOpSProjects\\Document_Portal\\Data\\Single_document_chat\\MasteringRAG.pdf"
-
-    question = "What are the key challenges with LLM?"
 
     if not Path(pdf_path).exists():
         print(f"PDF file does not exist: {pdf_path}")

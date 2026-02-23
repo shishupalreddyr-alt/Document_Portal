@@ -4,8 +4,8 @@ import sys
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from pytz import timezone
-import datetime
+#from pytz import timezone
+from datetime import datetime, timezone
 from exception.custom_exception import DocumentPortalException
 from logger.custom_logger import CustomLogger
 from utils.model_loader import ModelLoader
@@ -24,10 +24,6 @@ class SingleDocIngestion:
             self.loader = ModelLoader()
             self.log.info("Initializing SingleDocument chat", temp_path=str(self.data_dir),faiss_path=str(self.faiss_dir))
 
-            self.pdf_loader=PyPDFLoader()
-            self.text_splitter = RecursiveCharacterTextSplitter()
-            self.vector_store = FAISS()
-            self.document = None
         except Exception as e:
             self.log.error(f"Error occurred during SingleDocIngestion initialization: {e}")
             raise DocumentPortalException(e)
@@ -56,7 +52,7 @@ class SingleDocIngestion:
 
     def _create_retreiver(self,documents):
         try:
-            splitter = RecursiveCharacterTextSplitter(CHUNK_SIZE=1000, CHUNK_OVERLAP=100)
+            splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
             chunks = splitter.split_documents(documents)
             self.log.info(f"Documents split into {len(chunks)} chunks")
 

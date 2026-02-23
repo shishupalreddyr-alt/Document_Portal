@@ -1,23 +1,20 @@
 faiss_db:
   collection_name: "document_portal"
 
-
 embedding_model:
-  model_provider: "google"
-  model_name: "models/text-embedding-004"
+  google:
+    model_name: "models/text-embedding-004"
 
-  model_provider: "OpenAI"
-  model_name: "text-embedding-3-small"
+  openai:
+    model_name: "text-embedding-3-small"
 
 llm:
   google:
-    model_provider: "google"
     model_name: "gemini-2.0-flash"
     temperature: 1
     max_output_tokens: 2048
 
-  OpenAI:
-    model_provider: "OpenAI"
+  openai:
     model_name: "gpt-4o"
     temperature: 1
     max_output_tokens: 2048

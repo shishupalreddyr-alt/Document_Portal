@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from langchain.memory import ChatMessageHistory
 from langchain_community.vectorstores import FAISS
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_core.runnables.base import RunnableMap,Runnable
+from langchain_core.runnables.base import RunnableMap
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -13,25 +13,12 @@ from logger.custom_logger import CustomLogger
 from promptengg.promptlibrary import PROMPT_REGISTRY
 from model.models import *
 
-
-
-class DictOutputAdapter(Runnable):
-    """Wraps a runnable to return dict with key 'answer' for RunnableWithMessageHistory"""
-    def __init__(self, inner_runnable, output_key="answer"):
-        self.inner = inner_runnable
-        self.output_key = output_key
-
-    def invoke(self, input, **kwargs):
-        result = self.inner.invoke(input, **kwargs)
-        # Ensure the output is a dict
-        if isinstance(result, dict):
-            return result
-        return {self.output_key: result}
-
 class ConversationalRAG:
     def __init__(self, session_id: str, retriever):
         try:
+            # Load environment variables
             load_dotenv()
+            
             self.log = CustomLogger().get_logger(__name__)
             self.session_id = session_id
             self.retriever = retriever
@@ -44,33 +31,25 @@ class ConversationalRAG:
             self.contextualize_prompt = PROMPT_REGISTRY[PromptType.CONTEXTUALIZE_QUESTION.value]
             self.qa_prompt = PROMPT_REGISTRY[PromptType.CONTEXT_QA.value]
             
-            # Create QA chain (no RunnableMap)
-            self.qa_chain = create_stuff_documents_chain(self.llm, self.qa_prompt)
-            
             # History-aware retriever
             self.history_aware_retriever = create_history_aware_retriever(
-                llm=self.llm, 
-                retriever=self.retriever, 
-                prompt=self.contextualize_prompt
+                self.llm, self.retriever, self.contextualize_prompt
             )
             self.log.info("Created history-aware retriever", session_id=session_id)
             
-            # Retrieval + QA chain
-            retrieval_chain = create_retrieval_chain(
-                self.history_aware_retriever,
-                self.qa_chain
-            )
-            adapted_chain=DictOutputAdapter(retrieval_chain)
-            # Wrap in RunnableMap so it accepts dict input
-            self.rag_chain_runnable = RunnableMap({"input": retrieval_chain})
+            # QA chain
+            self.qa_chain = create_stuff_documents_chain(self.llm, self.qa_prompt)
+            
+            # RAG chain
+            self.rag_chain = create_retrieval_chain(self.history_aware_retriever, self.qa_chain)
             
             # Session message store
             self.store = {}
             self.log.info("Initialized and created RAG chain", session_id=session_id)
             
-            # Runnable with history
+            # Runnable with history — FIX: input_message_key must match inner chain key ("query")
             self.chain = RunnableWithMessageHistory(
-                self.rag_chain_runnable,
+                RunnableMap({"input":self.rag_chain}),
                 self._get_session_history,
                 input_message_key="input",          
                 history_message_keys=["chat_history"],
@@ -84,6 +63,7 @@ class ConversationalRAG:
 
     def _get_session_history(self):
         try:
+            # Always return a ChatMessageHistory for this session
             if self.session_id not in self.store:
                 self.store[self.session_id] = ChatMessageHistory()
             return self.store[self.session_id]
@@ -105,7 +85,7 @@ class ConversationalRAG:
 
     def invoke(self, user_input: str) -> str:
         try:
-            # Pass dict with key matching input_message_key
+            # MUST pass dict with key matching input_message_key
             response = self.chain.invoke(
                 {"input": user_input},                
                 config={"configurable": {"session_id": self.session_id}}
