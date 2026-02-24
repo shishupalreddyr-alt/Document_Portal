@@ -40,7 +40,7 @@ class ConversationalRAG:
             self.log.info("Conv RAG initialized", session_id = self.session_id)
 
         except Exception as e:
-            self.log.error("Failed to initialize Conv RAG", error=str{e})
+            self.log.error(f"Failed to initialize Conv RAG: str{e}")
             raise DocumentPortalException(e)
         
 
@@ -62,7 +62,8 @@ class ConversationalRAG:
             return self.retriever
 
         except Exception as e:
-            self.log.error("Failed to load retreiver from FAISS", errror=str{e})
+            self.log.error(f"Failed to read from FAISS: {e}")
+            
             raise DocumentPortalException(e)
             
 
@@ -93,7 +94,7 @@ class ConversationalRAG:
                         )
             return answer    
         except Exception as e:
-            self.log.error("Failed to invoke Conv RAG", error=str{e})
+            self.log.error(F"Failed to invoke Conv RAG: str{e}")
             raise DocumentPortalException(e)
             
 
@@ -106,7 +107,7 @@ class ConversationalRAG:
             self.log.info("LLM loaded successfully",session_id=self.session_id)
             return llm
         except Exception as e:
-            self.log.error("Failed to load LLM", error=str{e})
+            self.log.error(f"Failed to load LLM:str{e}")
             raise DocumentPortalException(e)
 
 
@@ -116,7 +117,7 @@ class ConversationalRAG:
             return "\n""\n".join(d.page_content for d in docs)
         
         except Exception as e:
-            #self.log.error("Failed to load LLM", error=str{e})
+            #self.log.error(f"Failed to load LLM: str{e}")
             raise DocumentPortalException(e)
     
     def _build_lcel_chain(self,):
@@ -143,6 +144,6 @@ class ConversationalRAG:
 
             self.log.info("LCEL Sequential chain is done", session_id= self.session_id)
         except Exception as e:
-            self.log.error("Failed to build RAG Chain ", error=str{e})
+            self.log.error(f"Failed to build RAG Chain :str{e}")
             raise DocumentPortalException(e)
         

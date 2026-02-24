@@ -6,12 +6,13 @@ from src.multidocument_chat.retrieval import ConversationalRAG
 def test_document_ingestion_rag():
     try:
         test_files=[
-            "Data\\Multi_document_chat\\GENAIRAGInterviewQuestions.pdf"
-            "Data\\Multi_document_chat\\MasteringRAG.pdf"
+            #r"C:\\LLMOpSProjects\\Document_Portal\\Data\\Multi_document_chat\\GENAIRAGInterviewQuestions.pdf",
+            r"C:\\LLMOpSProjects\\Document_Portal\\Data\\Multi_document_chat\\MasteringRAG.pdf"
         ]
 
         uploaded_files=[]
         for file_path in test_files:
+            print(file_path)
             if Path(file_path).exists():
                 uploaded_files.append(open(file_path, "rb"))
             else:
@@ -22,7 +23,7 @@ def test_document_ingestion_rag():
 
 ## Data ingestion
         ingestor=DocumentIngestor()
-        retriever=ingestor.ingest_files(uploaded_files)
+        retriever= ingestor.ingest_files(uploaded_files)
 
         for f in uploaded_files:
             f.close()
@@ -39,8 +40,10 @@ def test_document_ingestion_rag():
 
         
     except Exception as e:
-        print("Test failed": {str(e)})
+        print("Test failed", {str(e)})
         sys.exit(1)
 
+if __name__ == "__main__":
+    test_document_ingestion_rag()
 
-        
+
