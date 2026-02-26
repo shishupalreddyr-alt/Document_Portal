@@ -1,5 +1,5 @@
 from pathlib import Path
-from src.document_compare.data_ingestion import DocumentIngestion
+from src.document_compare.old_data_ingestion import DocumentIngestion
 from src.document_compare.document_comparator import DocumentComparatorLLM
 
 

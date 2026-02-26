@@ -6,6 +6,7 @@ logs/
 *.pyc
 data/
 test.py
+archive/
 logger\custom_logger_archive.py
 logger\custom_logger_archive2.py
 logger\custom_logger_archiveone.py
