@@ -12,8 +12,10 @@ pylint==3.3.7
 faiss-cpu==1.11.0.post1
 ## Logging 
 structlog
+fastapi
 PyMuPDF==1.26.3
 pydantic
+uvicorn==0.35.0
 pypdf==5.8.0
 langchain-core[tracing]
 pytest==8.4.1
@@ -22,4 +24,6 @@ streamlit==1.47.1
 doc2txt==0.9
 uvicorn==0.35.0
 fastapi==0.116.1
+python-multipart==0.0.20
+doc2txt==0.9
 -e .   
