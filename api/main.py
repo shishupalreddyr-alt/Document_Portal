@@ -8,8 +8,8 @@ from typing import List, Optional, Any, Dict
 import os
 
 from src.document_ingestion.data_ingestion import (
-    DocumentHandler,
-    DocumentCompare,
+    DocumentHandler,    #typeignore
+    DocumentCompare,    #typeignore
     ChatIngestor,
     FaissManager)
 from src.document_analyzer.document_analysis import DocumentAnalyzer
@@ -17,6 +17,9 @@ from src.document_compare.document_comparator import DocumentComparatorLLM
 from src.document_chat.retrieval import ConversationalRAG
 
 #from langchain_community.vectorstores import FAISS  #typeignore 
+
+FAISS_BASE=os.getenv("FAISS_BASE", "faiss_index")
+UPLOAD_BASE = os.getenv("UPLOAD_BASE", "data")
 
 
 app = FastAPI(title="Document Portal API", version="0.1")
@@ -59,7 +62,11 @@ class FastAPIFileAdapter:
         return self._uf.file.read()
     
 def _read_pdf_via_handler(handler:DocumentHandler, path:str) ->str:
-    pass
+    if hasattr(handler,"read_pdf"):
+        return handler.read_pdf(path)
+    if hasattr(handler,"read_"):
+        return handler.read_(path)
+    raise RuntimeError("Dochandler has neither read_pdf not read_method")
 
 @app.post("/analyze")
 async def anlyze_document(file:UploadFile = File(...)) -> Any:
@@ -108,11 +115,11 @@ async def chat_build_index(
         ci=ChatIngestor(
             temp_base=UPLOAD_BASE,
             faiss_base= FAISS_BASE,
-            use_sessions_dirs=use_session_dirs,
+            use_session_dirs=use_session_dirs,
             session_id=session_id or None,
 
         )
-        ci.built_retreiver(wrapped, chunk_size=chunk_size,chunk_overlap=chunk_overlap,k=k)
+        ci.built_retriver(wrapped, chunk_size=chunk_size,chunk_overlap=chunk_overlap,k=k)
 
     except HTTPException:
         pass
@@ -137,8 +144,9 @@ async def chat_query(
         if not os.path.isdir(index_dir):
             raise HTTPException(status_code=404, detail=f"FAISS index not found at: {index_dir}")
 
-        rag = ConversationalRAG(session_id=session_id)
-        rag.load_retriever_from_faiss(index_dir, k=k, index_name=FAISS_INDEX_NAME)  # build retriever + chain
+        rag = ConversationalRAG(session_id=str(session_id)) 
+
+        rag.load_retriever_from_faiss(index_dir)#, k=k, index_name=FAISS_INDEX_NAME)  # build retriever + chain
         response = rag.invoke(question, chat_history=[])
         #log.info("Chat query handled successfully.")
 
