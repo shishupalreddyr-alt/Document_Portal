@@ -8,8 +8,9 @@ from typing import List, Optional, Any, Dict
 import os
 
 from src.document_ingestion.data_ingestion import (
-    DocumentHandler,    #typeignore
-    DocumentCompare,    #typeignore
+    DocumentComparator,
+    DocHandler,    #typeignore
+    #DocumentCompare,    #typeignore
     ChatIngestor,
     FaissManager)
 from src.document_analyzer.document_analysis import DocumentAnalyzer
@@ -61,7 +62,7 @@ class FastAPIFileAdapter:
         self._uf.file.seek(0)
         return self._uf.file.read()
     
-def _read_pdf_via_handler(handler:DocumentHandler, path:str) ->str:
+def _read_pdf_via_handler(handler:DocHandler, path:str) ->str:
     if hasattr(handler,"read_pdf"):
         return handler.read_pdf(path)
     if hasattr(handler,"read_"):
@@ -71,7 +72,7 @@ def _read_pdf_via_handler(handler:DocumentHandler, path:str) ->str:
 @app.post("/analyze")
 async def anlyze_document(file:UploadFile = File(...)) -> Any:
     try:
-        dh=DocumentHandler()
+        dh=DocHandler()
         save_path=dh.save_pdf(FastAPIFileAdapter(file))
         text=_read_pdf_via_handler(dh,save_path)
 
@@ -88,13 +89,13 @@ async def anlyze_document(file:UploadFile = File(...)) -> Any:
 @app.post("/compare")
 async def compare_documents(file:UploadFile = File(...)) -> Any:
     try:
-        dc=DocumentCompare()
-        ref_path, act_path=dc.save_uploaded_file(FastAPIFileAdapter(reference),FastAPIFileAdapter(actual))
+        dc=DocumentComparator()
+        ref_path, act_path=dc.save_uploaded_files(FastAPIFileAdapter(reference),FastAPIFileAdapter(actual))
         _= ref_path, act_path
         combinedtext=dc.combine_documents()
         comp=DocumentComparatorLLM()
         df=comp.document_comparator(combinedtext)
-        return.{"rows:df.to_dict(orient="records), "sesion_id":dc.session_id"}
+        return {"rows:df.to_dict(orient=records)", "sesion_id:dc.session_id"}
     
     except HTTPException:
         raise

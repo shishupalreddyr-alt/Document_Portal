@@ -12,7 +12,7 @@ import shutil
 import fitz
 from langchain.schema import Document  #typeignore 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.document_loader import PyPDFLoader, Doc2txtLoader, TextLoader
+#from langchain_community.document_loader import PyPDFLoader, Doc2txtLoader, TextLoader
 from langchain_community.vectorstores import FAISS
 
 from utils.model_loader import ModelLoader
@@ -92,7 +92,7 @@ class FaissManager:
         if self._exists:
             self.vs = FAISS.load_local(
                 str(self.index_dir),
-                embeddings= self.emb
+                embeddings= self.emb,
                 allow_dangerous_deserialization=True,
             )
 
