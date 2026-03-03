@@ -1,8 +1,8 @@
 import sys
 from pathlib import Path
 from langchain_community.vectorstores import FAISS
-from src.singledocument_chat.data_ingestion import SingleDocIngestion
-from src.singledocument_chat.retrieval import ConversationalRAG
+from src.archive_singledocument_chat.data_ingestion import SingleDocIngestion
+from src.archive_singledocument_chat.retrieval import ConversationalRAG
 from utils.model_loader import ModelLoader
 
 FAISS_INDEX_PATH = Path("faiss_index")

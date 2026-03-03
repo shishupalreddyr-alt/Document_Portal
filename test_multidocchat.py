@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
-from src.multidocument_chat.data_ingestion import DocumentIngestor
-from src.multidocument_chat.retrieval import ConversationalRAG
+from src.archive_multidocument_chat.data_ingestion import DocumentIngestor
+from src.archive_multidocument_chat.retrieval import ConversationalRAG
 
 def test_document_ingestion_rag():
     try:
